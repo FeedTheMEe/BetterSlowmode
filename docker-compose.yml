@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  slowmode_bot:
+    image: node:18
+    command: sh -c "npm build && npm start"
+    working_dir: /app
+    volumes:
+      - ./:/app
+    depends_on:
+      slowmode_db:
+        condition: service_healthy
+    networks:
+      - slowmode_network
+
+  slowmode_db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: supersecretpassword
+      POSTGRES_DB: slowmode
+    ports:
+      - "5432:5432"
+    volumes:
+      - slowmode_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d slowmode"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+    networks:
+      - slowmode_network
+
+volumes:
+  slowmode_db_data:
+
+networks:
+  slowmode_network:
+    driver: bridge
