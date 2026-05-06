@@ -3,7 +3,7 @@ version: '3.8'
 services:
   slowmode_bot:
     image: node:18
-    command: sh -c "npm run build && npm start"
+    command: sh -c "npm i && npm run build && npm start"
     working_dir: /app
     volumes:
       - ./:/app
