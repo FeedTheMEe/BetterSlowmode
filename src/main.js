@@ -197,20 +197,23 @@ client.on("messageCreate", async (message) => {
                         "\nBetterSlowmode needs the \"Manage Messages\" and \"Send Messages\" permissions to function." +
                         "\nIf you want to remove the slowmode, use: `@BetterSlowmode remove`. Use `@BetterSlowmode help` for help.");
                 } else {
-                    await message.delete().catch((e) => {
+                    try {
+                        await message.delete();
+                    } catch (e) {
                         console.error("Error: Attempted to delete message that has already been deleted.");
                         console.error(e);
-                    });
+                    }
 
                     const timeNowSec = Math.floor(Date.now() / 1000);
                     const requiredTimeMs = (userTimestamp + (channelData.getLength() * 1000) - messageTimestamp);
                     const nextTimeSec = timeNowSec + Math.ceil(requiredTimeMs / 1000);
 
-                    await sendMessage(message.channel, `Please slow down <@${authorID}>! This channel has a slowmode enabled, you can send your next message in <t:${nextTimeSec}:R>`)
-                        .catch((e) => {
+                    try {
+                        await sendMessage(message.channel, `Please slow down <@${authorID}>! This channel has a slowmode enabled, you can send your next message in <t:${nextTimeSec}:R>`);
+                    } catch (e) {
                             console.error("Error: Attempted to send message in a channel where the bot lacks permissions.");
                             console.error(e);
-                        })
+                    }
                 }
                 return;
             }
